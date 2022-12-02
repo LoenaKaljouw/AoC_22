@@ -5,41 +5,39 @@
 #define MAX_SIZE 10
 
 int main()
-{  
-   FILE *fp;
-   int current_elf = 0;
-   int highest_elfs[3] = {0,0,0};
-   int top_elfs = 0;
-   char string[MAX_SIZE];
+{
+  FILE *fp;
+  int current_elf = 0;
+  int highest_elfs[3] = {0, 0, 0};
+  int top_elfs = 0;
+  char string[MAX_SIZE];
 
-   fp = fopen("Day1.txt" , "r");
-   
-   while(fgets(string, MAX_SIZE, fp)) {
-       if(string[0] == '\n')
-       {
-        for(int i = 0; i < 3; i++)
+  fp = fopen("Day1.txt", "r");
+
+  while (fgets(string, MAX_SIZE, fp))
+  {
+    if (string[0] == '\n')
+    {
+      for (int i = 0; i < 3; i++)
+      {
+        if (current_elf > highest_elfs[i])
         {
-          if(current_elf > highest_elfs[i])
-          {
-            highest_elfs[i] = current_elf;
-            break;
-          }
+          highest_elfs[i] = current_elf;
+          break;
         }
-        current_elf = 0;
-       }
-       current_elf += atoi(string);
-   }
-   
-   for(int i = 0 ; i < 3; i++)
-   {
-      top_elfs += highest_elfs[i];
-      itoa(highest_elfs[i], string, MAX_SIZE);
-      printf("%s\n", string);
-   }
-   
-   itoa(top_elfs, string, MAX_SIZE);
-   printf("%s\n", string);
-   fclose(fp);
-  
-   return 0;
+      }
+      current_elf = 0;
+    }
+    current_elf += atoi(string);
+  }
+
+  for (int i = 0; i < 3; i++)
+  {
+    top_elfs += highest_elfs[i];
+    printf("%d\n", highest_elfs[i]);
+  }
+  printf("%d\n", top_elfs);
+  fclose(fp);
+
+  return 0;
 }
