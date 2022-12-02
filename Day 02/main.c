@@ -30,7 +30,7 @@ int main()
       }
    }
 
-   printf("The score for the first part is: %.0f \n", score);
+   printf("\nThe score for the first part is: %.0f \n", score);
    printf("The score for the second part is: %.0f \n", score_2);
    fclose(fp);
 
