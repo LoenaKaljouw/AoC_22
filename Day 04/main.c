@@ -2,25 +2,27 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_SIZE 10
+#define MAX_SIZE 20
 
 int main()
 {
-  FILE *fp;
-  int current_elf = 0;
-  int highest_elfs[3] = {0, 0, 0};
-  int top_elfs = 0;
-  char string[MAX_SIZE];
+    FILE *fp;
+    int value = 0;
+    char string[MAX_SIZE];
 
-  fp = fopen("Day4.txt", "r");
+    fp = fopen("Day4.txt", "r");
 
-  while (fgets(string, MAX_SIZE, fp))
-  {
-    for(int i = string[0]; i < string[2]; i++)
+    while (fgets(string, MAX_SIZE, fp))
     {
-        
+        int pos1;
+        int pos2;
+        int pos3;
+        int pos4;       
+        for(int i = 0; i < strlen(string); i++)
+        {
+            
+        }
     }
-    printf("\n");
-  }
 
+    printf("Final value is: %d", value / 2);
 }

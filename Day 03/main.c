@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_SIZE 104
+#define MAX_SIZE 60
 
 static int check(char string[], int size);
-static char *compare(char *string_one[], char *string_two[]);
+static int compare(char string[], char temp_data2[], int size);
 
 int main(int argc, char const *argv[])
 {
@@ -13,49 +13,52 @@ int main(int argc, char const *argv[])
    int count = 0;
    int first_value = 0;
    int second_value = 0;
-   char base_data[MAX_SIZE];
+   char temp_data1[MAX_SIZE];
+   char temp_data2[MAX_SIZE];
    char string[MAX_SIZE];
 
    fp = fopen("Day3.txt", "r");
 
    while (fgets(string, MAX_SIZE, fp))
    {
+      count++;
       int size = strlen(string);
-      if (string[strlen(string) - 1] == '\n')
+      if (string[size - 1] == '\n')
       {
          size--;
       }
 
-      first_value += check(string, size);
-
-      if (count % 3 == 0)
+      if ((count % 3) == 1)
       {
          for (int i = 0; i < size; i++)
          {
-            base_data[i] = string[i];
-            count++;
+            temp_data1[i] = string[i];
          }
       }
-      else
+      else if ((count % 3) == 2)
       {
-         char temp[MAX_SIZE];
-         for (int i = 0; i < strlen(string); i++)
+         int offset = 0;
+         for (int i = 0; i < size; i++)
          {
-            for (int j = 0; j < strlen(base_data); i++)
+            for (int j = 0; j < strlen(temp_data1); j++)
             {
-               if (string[i] == base_data[j])
+               if (string[i] == temp_data1[j])
                {
-                  temp[strlen(temp)] = base_data[j];
+                  temp_data2[offset] = temp_data1[j];
+                  offset++;
                   break;
                }
             }
          }
-         count++;
-         printf("The count is: %d \n", count);
       }
+      else
+      {
+         second_value += compare(string, temp_data2, size);
+      }
+      first_value += check(string, size);
    }
-
    printf("The total priority is: %d \n", first_value);
+   printf("The badge priority is: %d \n", second_value);
    fclose(fp);
 
    return 0;
@@ -70,6 +73,22 @@ int check(char string[], int size)
          if (string[i] == string[j])
          {
             return (string[j] - 38) % 58;
+         }
+      }
+   }
+}
+
+int compare(char string[], char temp_data2[], int size)
+{
+   for (int i = 0; i < size; i++)
+   {
+      for (int j = 0; j < strlen(temp_data2); j++)
+      {
+         if (string[i] == temp_data2[j])
+
+         {
+            printf("Badge number: %c\n", temp_data2[j]);
+            return (temp_data2[j] - 38) % 58;
          }
       }
    }

@@ -34,7 +34,7 @@ int main()
   for (int i = 0; i < 3; i++)
   {
     top_elfs += highest_elfs[i];
-    printf("Top %d: %d\n", i+1, highest_elfs[i]);
+    printf("Top %d: %d\n", i + 1, highest_elfs[i]);
   }
   printf("Total: %d\n", top_elfs);
   fclose(fp);
