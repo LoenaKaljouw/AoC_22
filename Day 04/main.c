@@ -14,14 +14,8 @@ int main()
 
     while (fgets(string, MAX_SIZE, fp))
     {
-        int pos1;
-        int pos2;
-        int pos3;
-        int pos4;       
-        for(int i = 0; i < strlen(string); i++)
-        {
-            
-        }
+        char *token = strtok(string, "\n");
+        printf(" %s\n", token);
     }
 
     printf("Final value is: %d", value / 2);

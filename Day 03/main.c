@@ -4,6 +4,9 @@
 
 #define MAX_SIZE 60
 
+int temp_data1_size;
+int temp_data2_size;
+
 static int check(char string[], int size);
 static int compare(char string[], char temp_data2[], int size);
 
@@ -13,6 +16,7 @@ int main(int argc, char const *argv[])
    int count = 0;
    int first_value = 0;
    int second_value = 0;
+
    char temp_data1[MAX_SIZE];
    char temp_data2[MAX_SIZE];
    char string[MAX_SIZE];
@@ -23,6 +27,7 @@ int main(int argc, char const *argv[])
    {
       count++;
       int size = strlen(string);
+
       if (string[size - 1] == '\n')
       {
          size--;
@@ -33,19 +38,19 @@ int main(int argc, char const *argv[])
          for (int i = 0; i < size; i++)
          {
             temp_data1[i] = string[i];
+            temp_data1_size++;
          }
       }
       else if ((count % 3) == 2)
       {
-         int offset = 0;
          for (int i = 0; i < size; i++)
          {
-            for (int j = 0; j < strlen(temp_data1); j++)
+            for (int j = 0; j < temp_data1_size; j++)
             {
                if (string[i] == temp_data1[j])
                {
-                  temp_data2[offset] = temp_data1[j];
-                  offset++;
+                  temp_data2[temp_data2_size] = temp_data1[j];
+                  temp_data2_size++;
                   break;
                }
             }
@@ -82,14 +87,15 @@ int compare(char string[], char temp_data2[], int size)
 {
    for (int i = 0; i < size; i++)
    {
-      for (int j = 0; j < strlen(temp_data2); j++)
+      for (int j = 0; j < temp_data2_size; j++)
       {
          if (string[i] == temp_data2[j])
-
          {
-            printf("Badge number: %c\n", temp_data2[j]);
+            temp_data2_size = 0;
+            temp_data1_size = 0;
             return (temp_data2[j] - 38) % 58;
          }
       }
    }
+   return 0;
 }
