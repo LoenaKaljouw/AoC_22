@@ -3,8 +3,8 @@
 #include <string.h>
 
 #define MAX_SIZE 56
-#define MAX_BOX 56
-#define BOXES 9
+#define MAX_BOX 6
+#define BOXES 3
 #define MOVE_POS 5
 int main()
 {
@@ -76,6 +76,7 @@ int main()
                                     }
                                     count++;
                                     k++;
+                                    j++;
                                 }
                                 boxes[to][k - 1] = boxes[from][j];
                                 boxes[from][j] = 0;
@@ -204,9 +205,9 @@ int main()
     {
         for (int j = 0; j < MAX_BOX; j++)
         {
-            if (boxes[i][j] != 0)
+            if (boxes2[i][j] != 0)
             {
-                printf("%c", boxes[i][j]);
+                printf("%c", boxes2[i][j]);
                 break;
             }
         }
