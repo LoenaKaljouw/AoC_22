@@ -2,12 +2,40 @@
 #include <stdlib.h>
 #include <string.h>
 
-int main(void)
+#define MAX_SIZE 4098
+#define PACKET_SIZE 14
+int main()
 {
-int inp, temp;
+    FILE *fp;
+    char string[MAX_SIZE];
+    int value = 0;
 
-inp = 2347653;
+    fp = fopen("Day6.txt", "r");
 
-printf("%d, %d", ((temp = inp / 10000), (inp %= 10000), (temp)), (temp = inp / 1000, inp %= 1000, temp));
-printf("%d", inp);
+    while (fgets(string, MAX_SIZE, fp))
+    {
+        for (int i = 0; i < strlen(string); i++)
+        {
+            for (int j = 0; j < PACKET_SIZE; j++)
+            {
+                for (int k = 0; k < PACKET_SIZE; k++)
+                {
+                    if (string[i + j] == string[i + k])
+                    {
+                        if (j == k)
+                        {
+                        }
+                        else
+                        {
+                            goto clone;
+                        }
+                    }
+                }
+            }
+            break;
+        clone:
+            value++;
+        }
+    }
+    printf("Final value is: %d", value + PACKET_SIZE);
 }
