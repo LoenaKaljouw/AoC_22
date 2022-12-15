@@ -8,8 +8,8 @@ typedef struct Folder Folder;
 typedef struct File File;
 struct Folder
 {
-    Folder* parent;
-    File* files[];
+    Folder *parent;
+    File *files[];
 };
 
 struct File
@@ -37,7 +37,7 @@ int main()
     char string[MAX_SIZE];
     int value = 0;
 
-    Folder current_parent = NULL;
+    Folder *current_parent = new_folder(NULL);
     char *token;
 
     fp = fopen("Day7.txt", "r");
@@ -52,20 +52,41 @@ int main()
             if (token[0] == 'c')
             {
                 token = strtok(NULL, " ");
-                if(token[0] == '/')
+                if (token[0] != '.')
                 {
-                    Folder *root = new_folder(current_parent); 
+                    Folder *root = new_folder(current_parent);
+                    current_parent = root;
+                    printf("%s\n", token);
                 }
                 else
                 {
-                    Folder *root = new_folder(current_parent);
+                    printf("%s\n", token);
+                    current_parent = current_parent->parent;
                 }
-                printf("%s\n", token);
             }
             else if (token[0] == 'l')
             {
                 printf("%s\n", token);
             }
+        }
+        else if (token[0] > 47 && token[0] < 58)
+        {
+            token = strtok(string, " ");
+            int size = 0;
+            for (int i = 0; i < strlen(string); i++)
+            {
+                size = size * 10 + (string[i] - 48);
+            }
+            File *file = new_file(size);
+            if (current_parent->files[0] == NULL)
+            {
+                current_parent->files[0] = file;
+            }
+            else
+            {
+                current_parent->files[0] = file;
+            }
+            printf("%d\n", size);
         }
     }
     printf("Final value is: %d", value);

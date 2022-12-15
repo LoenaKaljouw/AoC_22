@@ -6,14 +6,6 @@
 
 int main()
 {
-    FILE *fp;
-    char string[MAX_SIZE];
-    int value = 0;
-    
-    fp = fopen("Day4.txt", "r");
-
-    while (fgets(string, MAX_SIZE, fp))
-    {
-    }
-    printf("Final value is: %d", value);
+    int data = (5 + 4 + 39 + 1 + 2) * (8.0/30.0);
+    printf("%d", data);
 }
