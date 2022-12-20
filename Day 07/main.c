@@ -6,10 +6,19 @@
 
 typedef struct Folder Folder;
 typedef struct File File;
+typedef struct System System;
+
+struct System
+{
+    int key;
+    Folder *folders[1];
+};
+
 struct Folder
 {
+    char name;
     Folder *parent;
-    File *files[];
+    File *files[1];
 };
 
 struct File
@@ -24,9 +33,10 @@ File *new_file(int key)
     return temp;
 };
 
-Folder *new_folder(Folder *parent)
+Folder *new_folder(Folder *parent, char name)
 {
     Folder *temp = malloc(sizeof(Folder));
+    temp->name = name;
     temp->parent = parent;
     return temp;
 };
@@ -37,7 +47,8 @@ int main()
     char string[MAX_SIZE];
     int value = 0;
 
-    Folder *current_parent = new_folder(NULL);
+    System system;
+    Folder *current_parent = new_folder(NULL, NULL);
     char *token;
 
     fp = fopen("Day7.txt", "r");
@@ -54,9 +65,10 @@ int main()
                 token = strtok(NULL, " ");
                 if (token[0] != '.')
                 {
-                    Folder *root = new_folder(current_parent);
+                    Folder *root = new_folder(current_parent, token[0]);
+                    system.folders[0] = root;
                     current_parent = root;
-                    printf("%s\n", token);
+                    printf("%c\n", current_parent->name);
                 }
                 else
                 {
@@ -78,16 +90,12 @@ int main()
                 size = size * 10 + (string[i] - 48);
             }
             File *file = new_file(size);
-            if (current_parent->files[0] == NULL)
-            {
-                current_parent->files[0] = file;
-            }
-            else
-            {
-                current_parent->files[0] = file;
-            }
-            printf("%d\n", size);
+
+            current_parent->files[0] = file;
+
+            printf("%d\n", current_parent->files[0]->key);
         }
     }
+    printf("%d\n", system.folders[0]->files[0]->key);
     printf("Final value is: %d", value);
 }
