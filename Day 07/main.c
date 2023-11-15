@@ -2,44 +2,84 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_SIZE 20
+#define MAX_SIZE 25
+#define MAX_FOLDER_SIZE 100000
+#define NEEDED_SPACE 30000000
+#define MAX_SPACE 70000000
 
-typedef struct Folder Folder;
-typedef struct File File;
-typedef struct System System;
-
-struct System
+typedef struct Folder
 {
-    int key;
-    Folder *folders[1];
-};
+    char name[MAX_SIZE];
+    int size;
+    int subfolderCount;
+    struct Folder* subfolders[MAX_SIZE];
+    struct Folder* parent;
+} Folder;
 
-struct Folder
-{
-    char name;
-    Folder *parent;
-    File *files[1];
-};
 
-struct File
-{
-    int key;
-};
+int sizeCheck(Folder* folder)
+{ 
+    int size = 0;
+    if(folder->subfolderCount == 0)
+    {
+        if(folder->size < MAX_FOLDER_SIZE)
+        {
+            return folder->size;
+        }
+        return 0;
+    }
+    for(int i = 0; i < folder->subfolderCount; i++)
+    {
+        size += sizeCheck(folder->subfolders[i]);
+    }
+    if(folder->size < MAX_FOLDER_SIZE)
+    {
+        return folder->size + size;
+    }
+    return size;
+}
 
-File *new_file(int key)
+int spaceCheck(Folder* folder, int space)
 {
-    File *temp = malloc(sizeof(File));
-    temp->key = key;
-    return temp;
-};
+    int size = 0;
+    if(folder->subfolderCount == 0)
+    {
+        if(folder->size >= space)
+        {
+            return folder->size;
+        }
+        return 0;
+    }
+    for(int i = 0; i < folder->subfolderCount; i++)
+    {
+        int newSize = spaceCheck(folder->subfolders[i], space);
+        if(size == 0)
+        {
+            size = newSize;
+        }
+        else if(newSize != 0 && newSize < size)
+        {
+            size = newSize;
+        }
+    }
+    if(size != 0)
+    {
+        return size;
+    }
+    if(folder->size >= space)
+    {
+        return folder->size;
+    }
+    return 0;
 
-Folder *new_folder(Folder *parent, char name)
+}
+
+int checkSmallest(Folder* folder)
 {
-    Folder *temp = malloc(sizeof(Folder));
-    temp->name = name;
-    temp->parent = parent;
-    return temp;
-};
+    int current_space = MAX_SPACE - folder->size;
+    int needed_space = NEEDED_SPACE - current_space;
+    return spaceCheck(folder, needed_space);
+}
 
 int main()
 {
@@ -47,55 +87,96 @@ int main()
     char string[MAX_SIZE];
     int value = 0;
 
-    System system;
-    Folder *current_parent = new_folder(NULL, NULL);
-    char *token;
-
     fp = fopen("Day7.txt", "r");
+
+    Folder system;
+    system.name[0] = '/';
+    system.size = 0;
+    system.parent = NULL;
+    system.subfolderCount = 0;
+
+    Folder* currentFolder;
+    currentFolder = &system;
 
     while (fgets(string, MAX_SIZE, fp))
     {
-        if (string[0] == '$')
+        if(string[0] == '$')
         {
-            token = strtok(string, "\n");
-            token = strtok(string, " ");
-            token = strtok(NULL, " ");
-            if (token[0] == 'c')
-            {
-                token = strtok(NULL, " ");
-                if (token[0] != '.')
+            if(string[2] == 'c' && string[5] != '/')
+            {   
+                if(string[5] == '.')
                 {
-                    Folder *root = new_folder(current_parent, token[0]);
-                    system.folders[0] = root;
-                    current_parent = root;
-                    printf("%c\n", current_parent->name);
+                    currentFolder = currentFolder->parent;
                 }
-                else
+                int nameSize = 0;
+                for(nameSize = 5; nameSize < sizeof(string); nameSize++)
                 {
-                    printf("%s\n", token);
-                    current_parent = current_parent->parent;
+                    if(string[nameSize]== '\n')
+                    {
+                        nameSize -= 5;
+                        break;
+                    }
                 }
-            }
-            else if (token[0] == 'l')
-            {
-                printf("%s\n", token);
-            }
+                for(int i = 0; i < currentFolder->subfolderCount; i++)
+                {
+                   int nameCheck = 0;
+                   for(nameCheck = 0; nameCheck < nameSize; nameCheck++)
+                   {
+                        if(currentFolder->subfolders[i]->name[nameCheck] != string[nameCheck + 5])
+                        {
+                            break;
+                        }
+                   }
+                   if(nameCheck == nameSize)
+                   {
+                        currentFolder = currentFolder->subfolders[i];
+                   }
+                }
+            }   
         }
-        else if (token[0] > 47 && token[0] < 58)
+        else if (string[0] == 'd')
         {
-            token = strtok(string, " ");
-            int size = 0;
-            for (int i = 0; i < strlen(string); i++)
+            Folder* folder = (Folder*)malloc(sizeof(Folder));    
+            
+            if (folder == NULL)
             {
-                size = size * 10 + (string[i] - 48);
+                fprintf(stderr, "Memory allocation failed\n");
+                return 1;
+            }  
+
+            for(int i = 4; string[i] != '\n'; i++)
+            {
+                folder->name[i-4] = string[i];
             }
-            File *file = new_file(size);
 
-            current_parent->files[0] = file;
+            folder->size = 0;
+            folder->subfolderCount = 0;
+            folder->parent = currentFolder;
 
-            printf("%d\n", current_parent->files[0]->key);
+            currentFolder->subfolders[currentFolder->subfolderCount] = folder;
+            currentFolder->subfolderCount++;
+        }
+        else
+        {  
+            Folder* saveFolder = currentFolder;
+            int size = 0;
+            for(int i = 0; string[i] != ' '; i++)
+            {
+                size *= 10;
+                size += string[i] - 48;
+            }
+            currentFolder->size += size;
+            while(currentFolder->parent != NULL)
+            {
+                currentFolder = currentFolder->parent;
+                currentFolder->size += size;
+            }
+            currentFolder = saveFolder;
         }
     }
-    printf("%d\n", system.folders[0]->files[0]->key);
-    printf("Final value is: %d", value);
+
+    int finalValue = sizeCheck(&system);
+    int finalSecondValue = checkSmallest(&system);
+
+    printf("Final value is: %d, to free up that space you can remove a space of: %d", finalValue, finalSecondValue);
 }
